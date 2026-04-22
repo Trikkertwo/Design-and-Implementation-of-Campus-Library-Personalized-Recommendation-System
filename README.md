@@ -60,7 +60,7 @@ requirements.txt
 
 ---
 
-## Windows + PyCharm 傻瓜式部署（推荐）
+## Windows + PyCharm Terminal 命令部署（推荐）
 
 > 以下步骤默认你已安装 Python 3.10+ 与 PyCharm。
 
@@ -68,21 +68,34 @@ requirements.txt
 1. 打开 PyCharm
 2. `File -> Open` 选择本项目根目录
 
-### 第 2 步：创建虚拟环境（PyCharm 图形界面）
-1. `File -> Settings -> Project -> Python Interpreter`
-2. 点击齿轮图标 `Add Interpreter`
-3. 选择 `Add Local Interpreter -> Virtualenv`
-4. 位置可用默认：`项目目录\.venv`
-5. 点击 `OK`
-
-### 第 3 步：安装依赖
-在 PyCharm Terminal 执行：
+### 第 2 步：在 PyCharm Terminal 创建并激活虚拟环境
 
 ```bash
+python -m venv .venv
+```
+
+激活虚拟环境（按你的终端类型选择一条）：
+
+```bash
+# CMD
+.venv\Scripts\activate
+
+# PowerShell
+.venv\Scripts\Activate.ps1
+```
+
+### 第 3 步：安装依赖
+在已激活虚拟环境的 PyCharm Terminal 执行：
+
+```bash
+python -m pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
+> 看到终端前缀出现 `(.venv)` 再继续执行后续命令。
+
 ### 第 4 步：初始化数据库
+在 PyCharm Terminal 执行：
 
 ```bash
 python manage.py makemigrations
@@ -90,6 +103,7 @@ python manage.py migrate
 ```
 
 ### 第 5 步：填充演示数据（重点）
+在 PyCharm Terminal 执行：
 
 ```bash
 python manage.py seed_demo_data
@@ -102,6 +116,7 @@ python manage.py seed_demo_data
 - 借阅/收藏/评分/评论/通知等演示数据
 
 ### 第 6 步：启动系统
+在 PyCharm Terminal 执行：
 
 ```bash
 python manage.py runserver
