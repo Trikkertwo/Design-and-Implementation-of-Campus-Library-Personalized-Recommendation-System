@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>登录 - 校园图书推荐系统</title>
+    <link rel="stylesheet" href="/static/library/style.css">
+</head>
+<body class="auth-bg">
+<div class="auth-wrap">
+    <section class="auth-panel">
+        <h1>校园图书个性化推荐系统</h1>
+        <p>以借阅行为驱动推荐，让阅读更高效。</p>
+    </section>
+    <section class="auth-card">
+        <h2>账号登录</h2>
+        {% for message in messages %}<div class="message">{{ message }}</div>{% endfor %}
+        <form method="post">
+            {% csrf_token %}
+            <label>用户名{{ form.username }}</label>
+            <label>密码{{ form.password }}</label>
+            <label>验证码
+                <div class="captcha-line">{{ form.captcha }}<strong id="captcha-text">{{ captcha }}</strong><button type="button" id="refresh">换一张</button></div>
+            </label>
+            <button class="btn-primary" type="submit">登 录</button>
+        </form>
+        <div class="auth-links">
+            <a href="/register/">注册账号</a>
+            <a href="/password/reset/">忘记密码</a>
+        </div>
+    </section>
+</div>
+<script>
+const refreshBtn = document.getElementById('refresh');
+refreshBtn?.addEventListener('click', async () => {
+    const res = await fetch('/captcha/refresh/');
+    const data = await res.json();
+    document.getElementById('captcha-text').textContent = data.captcha;
+});
+</script>
+</body>
+</html>

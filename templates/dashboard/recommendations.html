@@ -1,0 +1,8 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="card">
+<h2>推荐系统管理</h2>
+<p>每次打开本页会触发“刷新模型”日志记录。</p>
+{% for log in logs %}<p>{{ log.created_at|date:'Y-m-d H:i:s' }} - {{ log.strategy }} - {{ log.user.username|default:'系统' }} - {{ log.note }}</p>{% endfor %}
+</div>
+{% endblock %}

@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block title %}注册{% endblock %}
+{% block content %}
+<div class="card narrow">
+    <h2>用户注册</h2>
+    <form method="post">
+        {% csrf_token %}
+        <label>用户名{{ form.username }}</label>
+        <label>邮箱{{ form.email }}</label>
+        <label>密码{{ form.password }}</label>
+        <label>确认密码{{ form.confirm_password }}</label>
+        <label>验证码<div class="captcha-line">{{ form.captcha }}<strong id="captcha-text">{{ captcha }}</strong><button type="button" id="refresh">换一张</button></div></label>
+        <button class="btn-primary" type="submit">提交注册</button>
+    </form>
+</div>
+<script>
+document.getElementById('refresh')?.addEventListener('click', async () => {
+ const res = await fetch('/captcha/refresh/'); const data = await res.json();
+ document.getElementById('captcha-text').textContent = data.captcha;
+});
+</script>
+{% endblock %}

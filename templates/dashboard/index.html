@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>管理端 Dashboard</h1>
+<div class="grid4">
+  <div class="card"><h3>借阅总量</h3><p>{{ borrow_count }}</p></div>
+  <div class="card"><h3>在架图书</h3><p>{{ book_count }}</p></div>
+  <div class="card"><h3>活跃用户</h3><p>{{ active_users }}</p></div>
+  <div class="card"><h3>推荐系统</h3><a href="/dashboard/recommendations/">刷新模型 / 查看日志</a></div>
+</div>
+<div class="card"><h3>借阅量排行</h3>{% for b in hot_books %}<p>{{ b.title }} ({{ b.c }})</p>{% endfor %}</div>
+<div class="card"><a href="/dashboard/books/">图书管理</a> | <a href="/dashboard/users/">用户管理</a> | <a href="/dashboard/borrows/">借阅管理</a> | <a href="/dashboard/comments/">评论管理</a></div>
+{% endblock %}

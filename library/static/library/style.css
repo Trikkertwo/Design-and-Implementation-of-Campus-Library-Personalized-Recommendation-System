@@ -1,0 +1,29 @@
+:root{--primary:#4f46e5;--bg:#f6f8fc;--text:#111827}
+*{box-sizing:border-box;font-family:"Microsoft YaHei",sans-serif}
+body{margin:0;background:var(--bg);color:var(--text)}
+.container{width:min(1200px,94vw);margin:0 auto;padding:16px}
+.topbar{background:#111827;color:#fff}
+.topbar a{color:#e5e7eb;text-decoration:none;margin-right:16px}
+.topbar-inner{display:flex;justify-content:space-between;align-items:center;padding:14px 0}
+.brand{font-weight:700;color:#fff!important}
+.card{background:#fff;border-radius:12px;padding:18px;margin:12px 0;box-shadow:0 8px 20px rgba(0,0,0,.05)}
+.grid2,.grid3,.grid4{display:grid;gap:12px}
+.grid2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.grid3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.grid4{grid-template-columns:repeat(4,minmax(0,1fr))}
+.item{display:block;padding:6px 0;color:#1d4ed8;text-decoration:none}
+.message{background:#dbeafe;border-left:4px solid #2563eb;padding:8px;border-radius:4px;margin:8px 0}
+input,select,textarea,button{width:100%;padding:10px;margin-top:6px;margin-bottom:10px;border:1px solid #cbd5e1;border-radius:8px}
+button,.btn-primary{background:var(--primary);color:#fff;border:none;cursor:pointer}
+.filters{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+table{width:100%;border-collapse:collapse} th,td{padding:8px;border-bottom:1px solid #e5e7eb;text-align:left}
+.auth-bg{min-height:100vh;background:linear-gradient(130deg,#0f172a,#1d4ed8,#312e81)}
+.auth-wrap{width:min(1080px,94vw);margin:auto;min-height:100vh;display:grid;grid-template-columns:1.2fr 1fr;gap:22px;align-items:center}
+.auth-panel{color:#fff}
+.auth-panel h1{font-size:40px;margin-bottom:8px}
+.auth-card{background:#fff;border-radius:16px;padding:24px;box-shadow:0 20px 40px rgba(0,0,0,.25)}
+.auth-links{display:flex;justify-content:space-between}
+.captcha-line{display:grid;grid-template-columns:1fr auto auto;gap:8px;align-items:center}
+#captcha-text{display:inline-block;padding:8px 12px;background:#e0e7ff;border-radius:8px;letter-spacing:2px}
+.narrow{max-width:520px;margin:24px auto}
+@media (max-width:900px){.auth-wrap,.grid4,.grid3,.grid2,.filters{grid-template-columns:1fr}}

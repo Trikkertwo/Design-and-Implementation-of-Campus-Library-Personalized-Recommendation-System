@@ -1,0 +1,8 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="card"><h2>评论管理</h2>
+{% for c in comments %}
+<p>{{ c.book.title }} - {{ c.user.username }}：{{ c.content }} {% if not c.is_deleted %}<form method="post" action="/dashboard/comments/{{ c.id }}/delete/" style="display:inline-block;">{% csrf_token %}<button type="submit" style="width:auto;padding:4px 8px;margin:0;">删除</button></form>{% else %}(已删除){% endif %}</p>
+{% endfor %}
+</div>
+{% endblock %}

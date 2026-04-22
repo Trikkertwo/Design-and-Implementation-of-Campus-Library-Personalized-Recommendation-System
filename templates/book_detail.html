@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="card">
+    <h2>{{ book.title }}</h2>
+    <p><strong>作者：</strong>{{ book.author }} | <strong>ISBN：</strong>{{ book.isbn }} | <strong>分类：</strong>{{ book.category }}</p>
+    <p><strong>出版：</strong>{{ book.publisher }} {{ book.publish_year }} | <strong>馆藏：</strong>{{ book.available_copies }}/{{ book.total_copies }}</p>
+    <p>{{ book.summary }}</p>
+    <form method="post" action="/books/{{ book.id }}/borrow/">{% csrf_token %}<button class="btn-primary" type="submit">借阅</button></form>
+    {% if user_borrow %}
+    <form method="post" action="/books/{{ book.id }}/return/">{% csrf_token %}<button type="submit">归还</button></form>
+    <form method="post" action="/books/{{ book.id }}/renew/">{% csrf_token %}<button type="submit">续借</button></form>
+    {% endif %}
+    <form method="post" action="/books/{{ book.id }}/favorite/">{% csrf_token %}<button type="submit">{% if is_favorited %}取消收藏{% else %}收藏{% endif %}</button></form>
+    <form method="post" action="/books/{{ book.id }}/rate/">{% csrf_token %}
+        <select name="score"><option>5</option><option>4</option><option>3</option><option>2</option><option>1</option></select>
+        <button type="submit">评分</button>
+    </form>
+</div>
+<div class="grid2">
+<section class="card"><h3>评论</h3>
+<form method="post" action="/books/{{ book.id }}/comment/">{% csrf_token %}{{ comment_form.content }}<button type="submit">发布评论</button></form>
+{% for c in comments %}<p>{{ c.user.username }}：{{ c.content }}</p>{% empty %}<p>暂无评论</p>{% endfor %}
+</section>
+<section class="card"><h3>相似图书推荐</h3>{% for b in similar_books %}<a class="item" href="/books/{{ b.id }}/">{{ b.title }}</a>{% empty %}<p>暂无</p>{% endfor %}</section>
+</div>
+{% endblock %}

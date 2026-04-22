@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}校园图书推荐系统{% endblock %}</title>
+    <link rel="stylesheet" href="/static/library/style.css">
+</head>
+<body>
+<header class="topbar">
+    <div class="container topbar-inner">
+        <a href="/" class="brand">Campus Library Recommender</a>
+        {% if request.user.is_authenticated %}
+            <nav>
+                <a href="/books/">图书检索</a>
+                <a href="/history/">个人足迹</a>
+                <a href="/notifications/">消息</a>
+                {% if request.user.is_staff %}<a href="/dashboard/">管理端</a>{% endif %}
+                <a href="/password/change/">修改密码</a>
+                <a href="/logout/">退出</a>
+            </nav>
+        {% endif %}
+    </div>
+</header>
+<main class="container">
+    {% for message in messages %}
+        <div class="message">{{ message }}</div>
+    {% endfor %}
+    {% block content %}{% endblock %}
+</main>
+</body>
+</html>
