@@ -1,0 +1,8 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="grid3">
+<section class="card"><h3>借阅历史</h3>{% for i in borrows %}<p>{{ i.book.title }} - {{ i.get_status_display }} - {{ i.borrowed_at|date:'Y-m-d' }}</p>{% empty %}<p>暂无</p>{% endfor %}</section>
+<section class="card"><h3>收藏历史</h3>{% for i in favorites %}<p>{{ i.book.title }} - {{ i.created_at|date:'Y-m-d' }}</p>{% empty %}<p>暂无</p>{% endfor %}</section>
+<section class="card"><h3>个人足迹</h3>{% for i in footprints %}<p>{{ i.book.title }} - {{ i.viewed_at|date:'Y-m-d H:i' }}</p>{% empty %}<p>暂无</p>{% endfor %}</section>
+</div>
+{% endblock %}

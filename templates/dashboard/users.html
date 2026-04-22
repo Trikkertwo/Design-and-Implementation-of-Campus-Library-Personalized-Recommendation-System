@@ -1,0 +1,6 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="card"><h2>用户管理</h2>
+<table><tr><th>用户名</th><th>邮箱</th><th>状态</th><th>操作</th></tr>{% for u in users %}<tr><td>{{ u.username }}</td><td>{{ u.email }}</td><td>{% if u.is_active %}启用{% else %}禁用{% endif %}</td><td><form method="post" action="/dashboard/users/{{ u.id }}/toggle/" style="display:inline-block;">{% csrf_token %}<button type="submit" style="width:auto;padding:6px 10px;margin:0;">切换状态</button></form></td></tr>{% endfor %}</table>
+</div>
+{% endblock %}

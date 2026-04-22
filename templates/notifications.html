@@ -1,0 +1,4 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="card"><h2>消息通知</h2>{% for n in notifications %}<p>[{{ n.created_at|date:'Y-m-d H:i' }}] {{ n.title }}：{{ n.content }}</p>{% empty %}<p>暂无通知</p>{% endfor %}</div>
+{% endblock %}
