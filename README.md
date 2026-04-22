@@ -81,7 +81,7 @@ python -m venv .venv
 .venv\Scripts\activate
 
 # PowerShell
-. .\.venv\Scripts\Activate.ps1
+.venv\Scripts\Activate.ps1
 ```
 
 ### 第 3 步：安装依赖
