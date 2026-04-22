@@ -81,7 +81,7 @@ python -m venv .venv
 .venv\Scripts\activate
 
 # PowerShell
-.\.venv\Scripts\Activate.ps1
+. .\.venv\Scripts\Activate.ps1
 ```
 
 ### 第 3 步：安装依赖
@@ -91,6 +91,8 @@ python -m venv .venv
 python -m pip install --upgrade pip
 pip install -r requirements.txt
 ```
+
+> 看到终端前缀出现 `(.venv)` 再继续执行后续命令。
 
 ### 第 4 步：初始化数据库
 在 PyCharm Terminal 执行：
