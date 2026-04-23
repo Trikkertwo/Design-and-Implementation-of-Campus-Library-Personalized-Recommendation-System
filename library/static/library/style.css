@@ -42,5 +42,11 @@ table{width:100%;border-collapse:collapse} th,td{padding:8px;border-bottom:1px s
 .book-mini small{color:#64748b;line-height:1.4}
 .book-detail-head{display:grid;grid-template-columns:220px 1fr;gap:18px;align-items:start}
 .book-detail-head img{width:220px;height:310px;object-fit:cover;border-radius:12px;border:1px solid #dbeafe}
-@media (max-width:900px){.auth-wrap,.grid4,.grid3,.grid2,.filters{grid-template-columns:1fr}}
-@media (max-width:900px){.book-grid,.book-detail-head{grid-template-columns:1fr}.book-card{grid-template-columns:1fr}.book-card img,.book-detail-head img{width:100%;height:auto}}
+@media (max-width:900px){
+    .auth-wrap,.grid4,.grid3,.grid2,.filters{grid-template-columns:1fr}
+}
+@media (max-width:900px){
+    .book-grid,.book-detail-head{grid-template-columns:1fr}
+    .book-card{grid-template-columns:1fr}
+    .book-card img,.book-detail-head img{width:100%;height:auto}
+}
