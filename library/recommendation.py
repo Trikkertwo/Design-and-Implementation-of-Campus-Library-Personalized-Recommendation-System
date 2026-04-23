@@ -16,6 +16,8 @@ PERSONALIZED_CATEGORY_SIGNAL_WEIGHT = 0.20
 GUESS_RATING_SIGNAL_WEIGHT = 0.45
 GUESS_BORROW_SIGNAL_WEIGHT = 0.35
 GUESS_USER_MATCH_WEIGHT = 0.20
+GUESS_TOP_CATEGORY_LIMIT = 3
+PERSONALIZED_TOP_CATEGORY_LIMIT = 4
 
 
 def hot_books(limit=8):
@@ -41,16 +43,19 @@ def personalized_books(user, limit=8):
     for category in footprint_categories:
         category_weights[category] += FOOTPRINT_CATEGORY_WEIGHT
 
-    interacted_book_ids = set(BorrowRecord.objects.filter(user=user).values_list('book_id', flat=True))
-    interacted_book_ids.update(Favorite.objects.filter(user=user).values_list('book_id', flat=True))
-    interacted_book_ids.update(Footprint.objects.filter(user=user).values_list('book_id', flat=True))
+    interacted_book_ids = set(
+        BorrowRecord.objects.filter(user=user)
+        .values_list('book_id', flat=True)
+        .union(Favorite.objects.filter(user=user).values_list('book_id', flat=True))
+        .union(Footprint.objects.filter(user=user).values_list('book_id', flat=True))
+    )
 
     qs = Book.objects.exclude(id__in=interacted_book_ids).annotate(
         borrow_count=Count('borrowrecord'),
         avg_score=Coalesce(Avg('rating__score'), Value(0.0), output_field=FloatField()),
     )
     if category_weights:
-        top_categories = dict(category_weights.most_common(4))
+        top_categories = dict(category_weights.most_common(PERSONALIZED_TOP_CATEGORY_LIMIT))
         category_score = Case(
             *[When(category=category, then=Value(float(weight))) for category, weight in top_categories.items()],
             default=Value(0.0),
@@ -84,7 +89,7 @@ def guess_you_like(user, limit=8):
         .values('book__category')
         .annotate(c=Count('id'))
         .order_by('-c')
-        .values_list('book__category', flat=True)[:3]
+        .values_list('book__category', flat=True)[:GUESS_TOP_CATEGORY_LIMIT]
     )
     qs = Book.objects.annotate(
         borrow_count=Count('borrowrecord'),
