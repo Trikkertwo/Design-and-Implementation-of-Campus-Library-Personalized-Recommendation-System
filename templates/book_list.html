@@ -12,7 +12,7 @@
 <div class="book-grid">
     {% for b in books %}
         <article class="book-card">
-            <img src="{{ b.cover_url|default:'https://picsum.photos/seed/defaultbook/220/320' }}" alt="{{ b.title }} 封面">
+            <img src="{{ b.cover_url|default:default_book_cover_url }}" alt="{{ b.title }} 封面">
             <div>
                 <h3>{{ b.title }}</h3>
                 <p class="book-meta">{{ b.author }} · {{ b.category }}</p>

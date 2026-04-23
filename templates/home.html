@@ -2,9 +2,37 @@
 {% block content %}
 <h1>首页核心推荐</h1>
 <div class="grid4">
-    <section class="card"><h3>猜你喜欢</h3>{% for b in guess_books %}<a class="book-mini" href="/books/{{ b.id }}/"><img src="{{ b.cover_url|default:'https://picsum.photos/seed/defaultbook/120/170' }}" alt="{{ b.title }} 封面"><span><strong>{{ b.title }}</strong><small>{{ b.summary|default:'暂无简介'|truncatechars:48 }}</small></span></a>{% empty %}<p>暂无</p>{% endfor %}</section>
-    <section class="card"><h3>个性化推荐</h3>{% for b in personalized_books %}<a class="book-mini" href="/books/{{ b.id }}/"><img src="{{ b.cover_url|default:'https://picsum.photos/seed/defaultbook/120/170' }}" alt="{{ b.title }} 封面"><span><strong>{{ b.title }}</strong><small>{{ b.summary|default:'暂无简介'|truncatechars:48 }}</small></span></a>{% empty %}<p>暂无</p>{% endfor %}</section>
-    <section class="card"><h3>热门图书</h3>{% for b in hot_books %}<a class="book-mini" href="/books/{{ b.id }}/"><img src="{{ b.cover_url|default:'https://picsum.photos/seed/defaultbook/120/170' }}" alt="{{ b.title }} 封面"><span><strong>{{ b.title }}</strong><small>{{ b.summary|default:'暂无简介'|truncatechars:48 }}</small></span></a>{% empty %}<p>暂无</p>{% endfor %}</section>
-    <section class="card"><h3>新书推荐</h3>{% for b in new_books %}<a class="book-mini" href="/books/{{ b.id }}/"><img src="{{ b.cover_url|default:'https://picsum.photos/seed/defaultbook/120/170' }}" alt="{{ b.title }} 封面"><span><strong>{{ b.title }}</strong><small>{{ b.summary|default:'暂无简介'|truncatechars:48 }}</small></span></a>{% empty %}<p>暂无</p>{% endfor %}</section>
+    <section class="card">
+        <h3>猜你喜欢</h3>
+        {% for b in guess_books %}
+            {% include 'includes/book_mini.html' with book=b %}
+        {% empty %}
+            <p>暂无</p>
+        {% endfor %}
+    </section>
+    <section class="card">
+        <h3>个性化推荐</h3>
+        {% for b in personalized_books %}
+            {% include 'includes/book_mini.html' with book=b %}
+        {% empty %}
+            <p>暂无</p>
+        {% endfor %}
+    </section>
+    <section class="card">
+        <h3>热门图书</h3>
+        {% for b in hot_books %}
+            {% include 'includes/book_mini.html' with book=b %}
+        {% empty %}
+            <p>暂无</p>
+        {% endfor %}
+    </section>
+    <section class="card">
+        <h3>新书推荐</h3>
+        {% for b in new_books %}
+            {% include 'includes/book_mini.html' with book=b %}
+        {% empty %}
+            <p>暂无</p>
+        {% endfor %}
+    </section>
 </div>
 {% endblock %}

@@ -18,6 +18,7 @@ from .recommendation import guess_you_like, hot_books, new_books, personalized_b
 
 
 CAPTCHA_KEY = 'simple_captcha'
+DEFAULT_BOOK_COVER_URL = 'https://picsum.photos/seed/defaultbook/240/340'
 
 
 def _generate_captcha():
@@ -128,6 +129,7 @@ def home(request):
         'new_books': new_books(),
         'personalized_books': personalized_books(request.user),
         'guess_books': guess_you_like(request.user),
+        'default_book_cover_url': DEFAULT_BOOK_COVER_URL,
     }
     return render(request, 'home.html', context)
 
@@ -147,7 +149,11 @@ def book_list(request):
         qs = qs.filter(isbn__icontains=isbn)
     if category:
         qs = qs.filter(category__icontains=category)
-    return render(request, 'book_list.html', {'books': qs[:100], 'query': request.GET})
+    return render(request, 'book_list.html', {
+        'books': qs[:100],
+        'query': request.GET,
+        'default_book_cover_url': DEFAULT_BOOK_COVER_URL,
+    })
 
 
 @login_required
@@ -165,6 +171,7 @@ def book_detail(request, book_id):
         'user_borrow': user_borrow,
         'is_favorited': is_favorited,
         'comment_form': CommentForm(),
+        'default_book_cover_url': DEFAULT_BOOK_COVER_URL,
     })
 
 

@@ -2,7 +2,7 @@
 {% block content %}
 <div class="card">
     <div class="book-detail-head">
-        <img src="{{ book.cover_url|default:'https://picsum.photos/seed/defaultbook/260/380' }}" alt="{{ book.title }} 封面">
+        <img src="{{ book.cover_url|default:default_book_cover_url }}" alt="{{ book.title }} 封面">
         <div>
             <h2>{{ book.title }}</h2>
             <p><strong>作者：</strong>{{ book.author }} | <strong>ISBN：</strong>{{ book.isbn }} | <strong>分类：</strong>{{ book.category }}</p>
@@ -26,6 +26,6 @@
 <form method="post" action="/books/{{ book.id }}/comment/">{% csrf_token %}{{ comment_form.content }}<button type="submit">发布评论</button></form>
 {% for c in comments %}<p>{{ c.user.username }}：{{ c.content }}</p>{% empty %}<p>暂无评论</p>{% endfor %}
 </section>
-<section class="card"><h3>相似图书推荐</h3>{% for b in similar_books %}<a class="book-mini" href="/books/{{ b.id }}/"><img src="{{ b.cover_url|default:'https://picsum.photos/seed/defaultbook/120/170' }}" alt="{{ b.title }} 封面"><span><strong>{{ b.title }}</strong><small>{{ b.summary|default:'暂无简介'|truncatechars:48 }}</small></span></a>{% empty %}<p>暂无</p>{% endfor %}</section>
+<section class="card"><h3>相似图书推荐</h3>{% for b in similar_books %}{% include 'includes/book_mini.html' with book=b %}{% empty %}<p>暂无</p>{% endfor %}</section>
 </div>
 {% endblock %}

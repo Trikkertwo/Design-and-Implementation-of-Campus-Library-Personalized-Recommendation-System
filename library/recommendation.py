@@ -5,6 +5,18 @@ from django.db.models.functions import Coalesce
 
 from .models import Book, BorrowRecord, Favorite, Footprint
 
+BORROW_CATEGORY_WEIGHT = 3
+FAVORITE_CATEGORY_WEIGHT = 2
+FOOTPRINT_CATEGORY_WEIGHT = 1
+
+PERSONALIZED_BORROW_SIGNAL_WEIGHT = 0.45
+PERSONALIZED_RATING_SIGNAL_WEIGHT = 0.35
+PERSONALIZED_CATEGORY_SIGNAL_WEIGHT = 0.20
+
+GUESS_RATING_SIGNAL_WEIGHT = 0.45
+GUESS_BORROW_SIGNAL_WEIGHT = 0.35
+GUESS_USER_MATCH_WEIGHT = 0.20
+
 
 def hot_books(limit=8):
     return Book.objects.annotate(
@@ -23,11 +35,11 @@ def personalized_books(user, limit=8):
 
     category_weights = Counter()
     for category in borrowed_categories:
-        category_weights[category] += 3
+        category_weights[category] += BORROW_CATEGORY_WEIGHT
     for category in favored_categories:
-        category_weights[category] += 2
+        category_weights[category] += FAVORITE_CATEGORY_WEIGHT
     for category in footprint_categories:
-        category_weights[category] += 1
+        category_weights[category] += FOOTPRINT_CATEGORY_WEIGHT
 
     interacted_book_ids = set(BorrowRecord.objects.filter(user=user).values_list('book_id', flat=True))
     interacted_book_ids.update(Favorite.objects.filter(user=user).values_list('book_id', flat=True))
@@ -48,9 +60,9 @@ def personalized_books(user, limit=8):
         category_score = Value(0.0, output_field=FloatField())
     return qs.annotate(
         recommendation_score=ExpressionWrapper(
-            F('borrow_count') * Value(0.45)
-            + F('avg_score') * Value(0.35)
-            + category_score * Value(0.20),
+            F('borrow_count') * Value(PERSONALIZED_BORROW_SIGNAL_WEIGHT)
+            + F('avg_score') * Value(PERSONALIZED_RATING_SIGNAL_WEIGHT)
+            + category_score * Value(PERSONALIZED_CATEGORY_SIGNAL_WEIGHT),
             output_field=FloatField(),
         )
     ).order_by('-recommendation_score', '-created_at')[:limit]
@@ -90,9 +102,9 @@ def guess_you_like(user, limit=8):
         qs = qs.annotate(user_match=Value(0.0, output_field=FloatField()))
     return qs.annotate(
         score=ExpressionWrapper(
-            F('avg_score') * Value(0.45)
-            + F('borrow_count') * Value(0.35)
-            + F('user_match') * Value(0.20),
+            F('avg_score') * Value(GUESS_RATING_SIGNAL_WEIGHT)
+            + F('borrow_count') * Value(GUESS_BORROW_SIGNAL_WEIGHT)
+            + F('user_match') * Value(GUESS_USER_MATCH_WEIGHT),
             output_field=FloatField(),
         )
     ).order_by('-score', '-created_at')[:limit]
