@@ -9,9 +9,22 @@
     <input name="category" placeholder="分类" value="{{ query.category }}">
     <button class="btn-primary" type="submit">检索</button>
 </form>
-<table>
-    <tr><th>书名</th><th>作者</th><th>ISBN</th><th>分类</th><th>馆藏</th><th></th></tr>
-    {% for b in books %}<tr><td>{{ b.title }}</td><td>{{ b.author }}</td><td>{{ b.isbn }}</td><td>{{ b.category }}</td><td>{{ b.available_copies }}/{{ b.total_copies }}</td><td><a href="/books/{{ b.id }}/">详情</a></td></tr>{% empty %}<tr><td colspan="6">无匹配结果</td></tr>{% endfor %}
-</table>
+<div class="book-grid">
+    {% for b in books %}
+        <article class="book-card">
+            <img src="{{ b.cover_url|default:'https://picsum.photos/seed/defaultbook/220/320' }}" alt="{{ b.title }} 封面">
+            <div>
+                <h3>{{ b.title }}</h3>
+                <p class="book-meta">{{ b.author }} · {{ b.category }}</p>
+                <p class="book-meta">ISBN: {{ b.isbn }}</p>
+                <p>{{ b.summary|default:'暂无简介'|truncatechars:110 }}</p>
+                <p class="book-meta">馆藏：{{ b.available_copies }}/{{ b.total_copies }}</p>
+                <a class="item" href="/books/{{ b.id }}/">查看详情</a>
+            </div>
+        </article>
+    {% empty %}
+        <p>无匹配结果</p>
+    {% endfor %}
+</div>
 </div>
 {% endblock %}

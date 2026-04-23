@@ -1,6 +1,9 @@
-from django.db.models import Avg, Count
+from collections import Counter
 
-from .models import Book, BorrowRecord, Favorite
+from django.db.models import Avg, Case, Count, ExpressionWrapper, F, FloatField, Value, When
+from django.db.models.functions import Coalesce
+
+from .models import Book, BorrowRecord, Favorite, Footprint
 
 
 def hot_books(limit=8):
@@ -14,17 +17,43 @@ def new_books(limit=8):
 
 
 def personalized_books(user, limit=8):
-    categories = list(
-        BorrowRecord.objects.filter(user=user).values('book__category').annotate(c=Count('id')).order_by('-c')
+    borrowed_categories = BorrowRecord.objects.filter(user=user).values_list('book__category', flat=True)
+    favored_categories = Favorite.objects.filter(user=user).values_list('book__category', flat=True)
+    footprint_categories = Footprint.objects.filter(user=user).values_list('book__category', flat=True)
+
+    category_weights = Counter()
+    for category in borrowed_categories:
+        category_weights[category] += 3
+    for category in favored_categories:
+        category_weights[category] += 2
+    for category in footprint_categories:
+        category_weights[category] += 1
+
+    interacted_book_ids = set(BorrowRecord.objects.filter(user=user).values_list('book_id', flat=True))
+    interacted_book_ids.update(Favorite.objects.filter(user=user).values_list('book_id', flat=True))
+    interacted_book_ids.update(Footprint.objects.filter(user=user).values_list('book_id', flat=True))
+
+    qs = Book.objects.exclude(id__in=interacted_book_ids).annotate(
+        borrow_count=Count('borrowrecord'),
+        avg_score=Coalesce(Avg('rating__score'), Value(0.0), output_field=FloatField()),
     )
-    if categories:
-        top = [item['book__category'] for item in categories[:3]]
-        viewed = BorrowRecord.objects.filter(user=user).values_list('book_id', flat=True)
-        return Book.objects.filter(category__in=top).exclude(id__in=viewed).order_by('-created_at')[:limit]
-    favored = Favorite.objects.filter(user=user).values_list('book_id', flat=True)
-    if favored:
-        return Book.objects.exclude(id__in=favored).order_by('-created_at')[:limit]
-    return hot_books(limit)
+    if category_weights:
+        top_categories = dict(category_weights.most_common(4))
+        category_score = Case(
+            *[When(category=category, then=Value(float(weight))) for category, weight in top_categories.items()],
+            default=Value(0.0),
+            output_field=FloatField(),
+        )
+    else:
+        category_score = Value(0.0, output_field=FloatField())
+    return qs.annotate(
+        recommendation_score=ExpressionWrapper(
+            F('borrow_count') * Value(0.45)
+            + F('avg_score') * Value(0.35)
+            + category_score * Value(0.20),
+            output_field=FloatField(),
+        )
+    ).order_by('-recommendation_score', '-created_at')[:limit]
 
 
 def similar_books(book, limit=6):
@@ -38,4 +67,32 @@ def similar_books(book, limit=6):
 
 
 def guess_you_like(user, limit=8):
-    return Book.objects.annotate(avg_score=Avg('rating__score')).order_by('-avg_score', '-created_at')[:limit]
+    preferred_categories = list(
+        BorrowRecord.objects.filter(user=user)
+        .values('book__category')
+        .annotate(c=Count('id'))
+        .order_by('-c')
+        .values_list('book__category', flat=True)[:3]
+    )
+    qs = Book.objects.annotate(
+        borrow_count=Count('borrowrecord'),
+        avg_score=Coalesce(Avg('rating__score'), Value(0.0), output_field=FloatField()),
+    )
+    if preferred_categories:
+        qs = qs.annotate(
+            user_match=Case(
+                *[When(category=category, then=Value(1.0)) for category in preferred_categories],
+                default=Value(0.0),
+                output_field=FloatField(),
+            )
+        )
+    else:
+        qs = qs.annotate(user_match=Value(0.0, output_field=FloatField()))
+    return qs.annotate(
+        score=ExpressionWrapper(
+            F('avg_score') * Value(0.45)
+            + F('borrow_count') * Value(0.35)
+            + F('user_match') * Value(0.20),
+            output_field=FloatField(),
+        )
+    ).order_by('-score', '-created_at')[:limit]

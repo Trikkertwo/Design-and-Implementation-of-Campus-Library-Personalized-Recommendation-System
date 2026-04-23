@@ -6,13 +6,19 @@
     <title>登录 - 校园图书推荐系统</title>
     <link rel="stylesheet" href="/static/library/style.css">
 </head>
-<body class="auth-bg">
-<div class="auth-wrap">
-    <section class="auth-panel">
-        <h1>校园图书个性化推荐系统</h1>
-        <p>以借阅行为驱动推荐，让阅读更高效。</p>
+<body class="auth-page">
+<div class="auth-wrap modern-auth">
+    <section class="auth-panel modern-auth-panel">
+        <span class="auth-badge">Campus Library</span>
+        <h1>欢迎回来</h1>
+        <p>Google 风格的简洁体验，智能推荐你真正需要的书。</p>
+        <ul class="auth-points">
+            <li>智能推荐：借阅行为 + 收藏偏好 + 评分热度融合</li>
+            <li>图书可视化：每本书均展示封面与简介</li>
+            <li>快速检索：按书名 / 作者 / ISBN / 分类直达</li>
+        </ul>
     </section>
-    <section class="auth-card">
+    <section class="auth-card modern-auth-card">
         <h2>账号登录</h2>
         {% for message in messages %}<div class="message">{{ message }}</div>{% endfor %}
         <form method="post">
