@@ -1,10 +1,15 @@
 {% extends 'base.html' %}
 {% block content %}
 <div class="card">
-    <h2>{{ book.title }}</h2>
-    <p><strong>作者：</strong>{{ book.author }} | <strong>ISBN：</strong>{{ book.isbn }} | <strong>分类：</strong>{{ book.category }}</p>
-    <p><strong>出版：</strong>{{ book.publisher }} {{ book.publish_year }} | <strong>馆藏：</strong>{{ book.available_copies }}/{{ book.total_copies }}</p>
-    <p>{{ book.summary }}</p>
+    <div class="book-detail-head">
+        <img src="{{ book.cover_url|default:default_book_cover_url }}" alt="{{ book.title }} 封面">
+        <div>
+            <h2>{{ book.title }}</h2>
+            <p><strong>作者：</strong>{{ book.author }} | <strong>ISBN：</strong>{{ book.isbn }} | <strong>分类：</strong>{{ book.category }}</p>
+            <p><strong>出版：</strong>{{ book.publisher }} {{ book.publish_year }} | <strong>馆藏：</strong>{{ book.available_copies }}/{{ book.total_copies }}</p>
+            <p>{{ book.summary|default:'暂无简介' }}</p>
+        </div>
+    </div>
     <form method="post" action="/books/{{ book.id }}/borrow/">{% csrf_token %}<button class="btn-primary" type="submit">借阅</button></form>
     {% if user_borrow %}
     <form method="post" action="/books/{{ book.id }}/return/">{% csrf_token %}<button type="submit">归还</button></form>
@@ -21,6 +26,6 @@
 <form method="post" action="/books/{{ book.id }}/comment/">{% csrf_token %}{{ comment_form.content }}<button type="submit">发布评论</button></form>
 {% for c in comments %}<p>{{ c.user.username }}：{{ c.content }}</p>{% empty %}<p>暂无评论</p>{% endfor %}
 </section>
-<section class="card"><h3>相似图书推荐</h3>{% for b in similar_books %}<a class="item" href="/books/{{ b.id }}/">{{ b.title }}</a>{% empty %}<p>暂无</p>{% endfor %}</section>
+<section class="card"><h3>相似图书推荐</h3>{% for b in similar_books %}{% include 'includes/book_mini.html' with book=b %}{% empty %}<p>暂无</p>{% endfor %}</section>
 </div>
 {% endblock %}
