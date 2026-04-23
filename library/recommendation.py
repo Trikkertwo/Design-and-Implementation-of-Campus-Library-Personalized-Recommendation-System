@@ -43,7 +43,7 @@ def personalized_books(user, limit=8):
     for category in footprint_categories:
         category_weights[category] += FOOTPRINT_CATEGORY_WEIGHT
 
-    interacted_book_ids = set(
+    interacted_book_ids = (
         BorrowRecord.objects.filter(user=user)
         .values_list('book_id', flat=True)
         .union(Favorite.objects.filter(user=user).values_list('book_id', flat=True))
