@@ -7,7 +7,7 @@ from django.db.models.functions import Coalesce
 from .models import Book, BorrowRecord, Favorite, Footprint
 
 BORROW_CATEGORY_WEIGHT = 3
-FAVORITE_CATEGORY_WEIGHT = 2
+FAVORITED_CATEGORY_WEIGHT = 2
 FOOTPRINT_CATEGORY_WEIGHT = 1
 
 PERSONALIZED_BORROW_SIGNAL_WEIGHT = 0.45
@@ -19,6 +19,21 @@ GUESS_BORROW_SIGNAL_WEIGHT = 0.35
 GUESS_USER_MATCH_WEIGHT = 0.20
 GUESS_TOP_CATEGORY_LIMIT = 3
 PERSONALIZED_TOP_CATEGORY_LIMIT = 4
+PERSONALIZED_SIGNAL_WEIGHTS = (
+    PERSONALIZED_BORROW_SIGNAL_WEIGHT,
+    PERSONALIZED_RATING_SIGNAL_WEIGHT,
+    PERSONALIZED_CATEGORY_SIGNAL_WEIGHT,
+)
+GUESS_SIGNAL_WEIGHTS = (
+    GUESS_RATING_SIGNAL_WEIGHT,
+    GUESS_BORROW_SIGNAL_WEIGHT,
+    GUESS_USER_MATCH_WEIGHT,
+)
+
+if abs(sum(PERSONALIZED_SIGNAL_WEIGHTS) - 1.0) > 1e-9:
+    raise ValueError('PERSONALIZED signal weights must sum to 1.0')
+if abs(sum(GUESS_SIGNAL_WEIGHTS) - 1.0) > 1e-9:
+    raise ValueError('GUESS signal weights must sum to 1.0')
 
 
 def hot_books(limit=8):
@@ -40,7 +55,7 @@ def personalized_books(user, limit=8):
     for category in borrowed_categories:
         category_weights[category] += BORROW_CATEGORY_WEIGHT
     for category in favored_categories:
-        category_weights[category] += FAVORITE_CATEGORY_WEIGHT
+        category_weights[category] += FAVORITED_CATEGORY_WEIGHT
     for category in footprint_categories:
         category_weights[category] += FOOTPRINT_CATEGORY_WEIGHT
 
