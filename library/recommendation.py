@@ -6,6 +6,7 @@ from django.db.models.functions import Coalesce
 
 from .models import Book, BorrowRecord, Favorite, Footprint
 
+# Category preference signal strengths from strongest to weakest user behavior.
 BORROW_CATEGORY_WEIGHT = 3
 FAVORITED_CATEGORY_WEIGHT = 2
 FOOTPRINT_CATEGORY_WEIGHT = 1
@@ -31,9 +32,9 @@ GUESS_SIGNAL_WEIGHTS = (
 )
 
 if abs(sum(PERSONALIZED_SIGNAL_WEIGHTS) - 1.0) > 1e-9:
-    raise ValueError('PERSONALIZED signal weights must sum to 1.0')
+    raise ValueError(f'PERSONALIZED signal weights must sum to 1.0, got {sum(PERSONALIZED_SIGNAL_WEIGHTS)}')
 if abs(sum(GUESS_SIGNAL_WEIGHTS) - 1.0) > 1e-9:
-    raise ValueError('GUESS signal weights must sum to 1.0')
+    raise ValueError(f'GUESS signal weights must sum to 1.0, got {sum(GUESS_SIGNAL_WEIGHTS)}')
 
 
 def hot_books(limit=8):
@@ -123,10 +124,10 @@ def guess_you_like(user, limit=8):
     else:
         qs = qs.annotate(user_match=Value(0.0, output_field=FloatField()))
     return qs.annotate(
-        score=ExpressionWrapper(
+        recommendation_score=ExpressionWrapper(
             F('avg_score') * Value(GUESS_RATING_SIGNAL_WEIGHT)
             + F('borrow_count') * Value(GUESS_BORROW_SIGNAL_WEIGHT)
             + F('user_match') * Value(GUESS_USER_MATCH_WEIGHT),
             output_field=FloatField(),
         )
-    ).order_by('-score', '-created_at')[:limit]
+    ).order_by('-recommendation_score', '-created_at')[:limit]
