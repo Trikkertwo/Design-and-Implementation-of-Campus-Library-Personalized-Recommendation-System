@@ -1,4 +1,5 @@
 from collections import Counter
+from itertools import chain
 
 from django.db.models import Avg, Case, Count, ExpressionWrapper, F, FloatField, Value, When
 from django.db.models.functions import Coalesce
@@ -43,11 +44,12 @@ def personalized_books(user, limit=8):
     for category in footprint_categories:
         category_weights[category] += FOOTPRINT_CATEGORY_WEIGHT
 
-    interacted_book_ids = list(
-        BorrowRecord.objects.filter(user=user)
-        .values_list('book_id', flat=True)
-        .union(Favorite.objects.filter(user=user).values_list('book_id', flat=True))
-        .union(Footprint.objects.filter(user=user).values_list('book_id', flat=True))
+    interacted_book_ids = set(
+        chain(
+            BorrowRecord.objects.filter(user=user).values_list('book_id', flat=True),
+            Favorite.objects.filter(user=user).values_list('book_id', flat=True),
+            Footprint.objects.filter(user=user).values_list('book_id', flat=True),
+        )
     )
 
     qs = Book.objects.exclude(id__in=interacted_book_ids).annotate(

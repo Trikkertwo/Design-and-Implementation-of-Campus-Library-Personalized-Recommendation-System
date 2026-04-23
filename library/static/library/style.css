@@ -24,7 +24,7 @@ table{width:100%;border-collapse:collapse} th,td{padding:8px;border-bottom:1px s
 .auth-card{background:#fff;border-radius:20px;padding:30px;box-shadow:0 24px 60px rgba(15,23,42,.12)}
 .auth-links{display:flex;justify-content:space-between}
 .captcha-line{display:grid;grid-template-columns:1fr auto auto;gap:8px;align-items:center}
-.captcha-line button{width:auto;white-space:nowrap;padding:10px 14px}
+.captcha-line button{width:auto;white-space:nowrap}
 #captcha-text{display:inline-block;padding:8px 12px;background:#e0e7ff;border-radius:8px;letter-spacing:2px}
 .narrow{max-width:520px;margin:24px auto}
 .auth-badge{display:inline-block;padding:6px 12px;border-radius:999px;background:#dbeafe;color:#1d4ed8;font-weight:700;font-size:12px}
@@ -44,8 +44,6 @@ table{width:100%;border-collapse:collapse} th,td{padding:8px;border-bottom:1px s
 .book-detail-head img{width:220px;height:310px;object-fit:cover;border-radius:12px;border:1px solid #dbeafe}
 @media (max-width:900px){
     .auth-wrap,.grid4,.grid3,.grid2,.filters{grid-template-columns:1fr}
-}
-@media (max-width:900px){
     .book-grid,.book-detail-head{grid-template-columns:1fr}
     .book-card{grid-template-columns:1fr}
     .book-card img,.book-detail-head img{width:100%;height:auto}
